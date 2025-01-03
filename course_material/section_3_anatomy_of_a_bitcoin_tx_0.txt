@@ -1,0 +1,326 @@
+base58 apr/may class
+"european" time slot. 
+
+base58 -> teach you everything there is to know about bitcoin transactions!
+
+six week long class!
+week 1:
+what is a bitcoin transaction
+what's it made out of?
+what kind of information can we find in it
+"pre-segwit" format etc!
+
+week 2: script, locking and unlocking. first standard script
+week 3: segwit! finally learn about segwit transactions and segwit scripts
+week 4: signatures! cryptography, elliptic curves, private keys
+week 5: signing transactions. ECDSA etc... schnorr (taproot <- not enough time..)
+week 6: multisigs + getting your transaction mined!
+
+intros!
+kody! TA coding environments .. python + bitcoin-cli. repl.it
+
+
+name/nym: lisa, niftynei
+background: i work at blockstream core-lightning; bitcoin transactions!
+where: new york city; houston tx
+hoping to get out of class: much better and deeper of understanding of bitcoin. confidence bitcoin
+first bitcoin tx:  ??. jimmy song's class 2018!
+
+
+
+
+bitcoin transactions!
+
+where do they fit in the grand scheme of bitcoin?
+what are they responsible for
+
+we'll go find a bitcoin transaction in the wild!
+
+
+not going spend a lot of time talking about bitcoin blocks and mining and networking (computer)... 
+-> exercise to the reader!
+
+
+what is money?
+
+cash. physical objects.
+
+how do you "transact" with a physical object like cash?
+
+if i have $5 and i give it to chris.
+now chris $5.
+
+look in my wallet, there's nothing there. i have $0
+chris looks in his wallet. there's $5. he has $5.
+
+value of the object, is the object.
+you transact by handing the object to someone else!
+sometimes you get a receipt which records the fact that that "transaction" happened
+("bearer notes" -> the person who "bears" or holds the object has the value. it lives in the object)
+
+
+banks work?
+money in a bank isn't like having $5 in your wallet.
+
+take the $5 and you give it to the banker
+kody gives the banker $5
+
+
+VAULT: $0
+
+on a piece of paper "ledger":
+lisa  -> $0
+
+
+make a transaction happen between kody + lisa
+i want to send kody $5 from my bank account to his bank account
+
+how to make this happen?
+call the bank. 
+prove to them that i am "lisa" (authority to move the money)
+tell them where to move (to kody)
+banker! 
+banker moves it!
+
+kody wants to withdraw his money, he'd go tell a banker that he's "kody"
+kody withdrew $10 from the bank
+
+
+
+bitcoin is the ledger but there's no vault!
+
+
+objects that live in a ledger. that have values written down on them.
+have "names" next to the values.
+
+
+bitcoin "transaction"
+written record of previous amounts that are being spent
+new amounts that are being assigned to .. new people*
+
+
+form. DMV, fill out a tax form.
+
+fields of information fill in.
+
+TAX FORM version 2291:
+name: AAAAAA BBBBBB
+social security number: xxx-xx-xxxx
+how much money did you make:  $xxxxxxxx
+how much money do you owe us: $xxxxxxxx
+how would you like to pay us:
+
+
+what fields are in a bitcoin transaction?
+
+version number: 1, 2
+number of previous entries in the ledger that you're SPENDING (number of inputs)
+inputs
+	-> 
+number of new records we're creating
+new records of who owns the bitcoin (outputs)
+	-> amount	
+	-> script / name of who owns it
+locktime 
+
+
+transaction... [grittynugget]
+0. $5, lisa -> spent transaction output
+1. $5, kody
+2. $10, ari
+
+GOAL: move my $5 from tx EDRAIA829 to kody!
+
+construct a new form (transaction in bitcoin)
+
+that's all there is to it! 
+this is a transaction record!
+
+txid: [lunarsunrise]
+version: 1
+how many previous entries (outputs) am i spending?  1
+	"input"
+	-> what's the txid of that entry? 	     grittynugget
+	-> which output on that tx are you spending? #0
+	-> prove that you have the ability to spend this output: XXXXXXXX 
+	-> sequence number... random number.		         feffffff
+how many people am i sending this to? 		    1
+	0. $5, kody
+locktime: 0
+
+how do i make this transaction "happen"
+
+i'm gonna take this form of data and i'm going to broadcast it to the rest of the bitcoin network
+other nodes, they're gonna take my transaction data and pass it around so that everyone gets it
+
+through the magic of distributed peer to peer networks.
+this form is public data!!
+eventually, this form will get passed to a special node on the network a "miner"
+
+the miner looks through all the "transaction forms" that everyone is making and sending them
+they find the ones that they "like the best" -> how you can be more likable to a miner
+
+miner will take a batch of these transaction forms and put them into a "folder"
+
+once your transaction form is included into a "folder" by a miner it's considered part
+of the bitcoin ledger!
+
+that transfer is considered PERMANENT! and valid!
+
+the transfer that that transaction details or explains 
+
+double spend!!
+
+part of the work that a bitcoin node does is checks that every input of every transaction
+is only ever spent once!
+
+
+UTXO -> Unspent TX Output
+
+two questions:
+1) how much bitcoin does kody own? 10 bitcoin
+2) what outputs is that 10 bitcoin located in?
+	->grittynugget:1
+	lunarsunnrise:0	
+
+real life
+	68333a10b368e0d002098827fa3f348135fb728ade74d265e6abf41dfcb60a1c:1
+
+transaction ids are always 32-bytes long!
+
+
+block 3
+block 2
+block 1 <- included in this block
+
+let's go find a bitcoin transaction in the wild!
+what they look like for realsies
+break it into all the different fields! live! action!
+
+where do we find real bitcoin transactions?
+-> run your own node and pull them out of a block database that you keep on a computer you own
+-> publicly run and maintained websites that make this block data easy to browse
+	-> mempool.space
+	-> blockstream.info
+
+
+
+'raw transaction data'
+version: 	    02000000
+segwit bytes: 	    0001
+number of 'inputs': 03
+#0
+	txid: 		     d19441b832d4e24e4e10c08413b57c017785ea7407b373d4566e11ad94d8134c
+	index of the output: 1c000000 (28)
+	scriptSig:           17 1600147c846a806f4d9e516c9fb2fe364f28eac4e3c3fc
+	sequence: 	     ffffffff
+
+	(value: 5.00000000)
+#1 
+	txid:  3d416a5941422eeecbcc0e3fe6aa7a88d00d22b67df149293e3c5bee10c4719a
+	index: 2c000000 (44)
+	scriptSig: 17 1600147c846a806f4d9e516c9fb2fe364f28eac4e3c3fc
+	sequence: ffffffff
+
+	(value: 5.00000000)
+#2
+	txid: 4f22589a292781a3cc2d636b9f1932f367305625a7874f8573b72b98ad736996
+	index: 00000000 (0)
+	scriptSig: 171600147c846a806f4d9e516c9fb2fe364f28eac4e3c3fc
+	sequence: ffffffff
+	
+	(value: 2.21472803)
+
+count of outputs: 02
+	amount: f564680400000000 -> 073950453 satoshis
+	person that can spend it: 17a9142c21151d54bd219dcc4c52e1cb38672dab8e36cc87
+	
+
+	amount: c027654400000000 -> 1147480000 satoshis
+	person that can spend it: 1976a91439b1050dba04b1d1bc556c2dcdcb3874ba3dc11e88ac
+
+segwit data (proof you can spend the inputs), attachments more proof you can spend the inputs
+02 
+47304402203ccede7995b26185574a050373cfe607f475f7d8ee6927647c496e3b45bf61a302202bd1ff88c7f4ee0b6f0c98f687dff9033f770b23985f590d178b9085df58910101
+2103789a9d83798d4cbf688f9969a94084ee1655059e137b43492ee94dc4538790ab
+
+02
+483045022100b46ab18056655cc56b1778fd61a56f895c2f44c97f055ea0269d991efd181fb402206d651a5fb51081cfdb247a1d489b182f41e52434d7c4575bea30d2ce3d24087d01
+2103789a9d83798d4cbf688f9969a94084ee1655059e137b43492ee94dc4538790ab
+
+02
+47 3044022069bf2ac34569565a62a1e0c12750104f494a906fefd2f2a462199c0d4bc235d902200c37ef333b453966cc5e84b178ec62125cbed83e0c0df4448c0fb331efa49e5101
+21 03789a9d83798d4cbf688f9969a94084ee1655059e137b43492ee94dc4538790ab
+
+locktime! 00000000
+
+we just unpacked our first bitcoin transaction!!
+
+how many previous outputs is this transaction spending? 3, inputs
+how many new outputs are we creating? 2, outputs
+
+what is the value of the outputs? 12.21430453 bitcoin
+what is the value of the inputs?  12.21472803 bitcoin
+
+are these the same number? no
+difference is 42350 satoshis
+
+why aren't they the same number?  
+one rule is that the output value <= input value? yes, it's valid
+
+where does the difference go?
+it's not in this transaction. did it get burned?
+did we just burn 42350 satoshis? unless it ends up in an output somewhere, these funds are gone forever
+
+so where do they go?
+and why is everyone calling them "fees"?
+
+at the tx level, the amount of inputs >= amount of output value
+at the block level, the amount of inputs >= amount of outputs + block subsidy
+
+
+every block there is 1 special transaction.
+only one person can make build this transaction -> miner themselves
+
+special transaction: coinbase!
+
+it's always the first transaction in a block
+it has no inputs! it spends no previous outputs
+
+outputs!
+-> a miner is allowed to give themselves up to the "block subsidy" (create new bitcoin or add to bitcoin supply)
+-> allowed to give themselves any bitcoin not claimed in any of the other transaction outputs (fee)
+
+by leaving some satoshis out of my transaction's outputs
+i leave them available to be claimed by an output that the miner makes in the coinbase.
+self-interested so they put all of the satoshis that are "left out" of outputs in tx in a block into their output in the coinbase
+
+generally speaking: the total bitcoin in inputs - total bitcoin in outputs across the entire block
+
+will be equal to the block subsidy.
+
+[6.25 bitcoin]
+
+there have a few blocks where the miner forgot to give themselves the block subsidy!
+
+how much of this is fees?
+6.30446353
+6.25000000
+   5,446,353 sats in fees in block 731418
+
+
+fields in a form/transaction
+outputs + inputs
+we saw our first bitcoin transaction
+we learned about fees and coinbase transactions
+we calculated the miner reward from fees for block 731418.
+
+
+
+prerequisite video: encodings + endianness
+encoding: hexadecimal
+endianness: little
+
+in japan, put decimals every 4 000s, write numbers in 10,000s instead of 100s
+
+1 bitcoin = 100,000,000 satoshis

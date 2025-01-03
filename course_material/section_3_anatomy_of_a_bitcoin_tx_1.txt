@@ -1,0 +1,203 @@
+what is a transaction?
+
+bitcoin tx -> transaction <- protocol class
+
+- transactions, fields, txid 
+- script, assign bitcoin to people, move it around
+          what protects bitcoin
+- signatures, elliptic crypto, finite fields,
+	how public private keys work
+	sighashes -- TX_HASH mailing list Russell O'Connor
+- ?? multisig, psbts, ??
+- strategies for getting txs mined
+
+the entire tx is in hex. 
+
+a lot like a form maybe fill out the DMV. registring a car.
+
+registering a vehicle:
+name,
+car VIN,
+make, model, year
+color is it
+previous owner
+signature
+date.
+
+
+bitcoin tx -> form
+
+0100000001913f3edcafa48bcd5742225a752f3dd8cef35596dfb0fce551c5b455ce0a02d63b0000006a473044022062f4f61766e1edf89b9b94d0629d67bfefb62e6ffec63f17d0f10ce5e329dbf4022039d566558c1f98742345e70b194bbcb8b8fff5b7fa2f0507c9f31a5a2ea24749012103fc3e6b07b7bec800cb0861c172344687d146888aaf0f811eaca8b1ef6684c9fc0000008002f07e0e000000000017a914783b39e49c6b6544a51bf0cbd4f47eef116be81987e0ec0400000000001976a91456c0bc2f50bc150d4ea122e66db7c48b01b9722988ac00000000
+
+two types of fields:
+	- fixed length fields. pre-set number of bytes allowed for that field.
+	- variable length fields. there's no pre-set length. instead a length byte and then data for that field
+	- compactSize fields. hybrid fixed/variable length field. always used to tell a size.
+
+version, fixed. 4-bytes: 01000000 -> 1
+count of inputs, compactSize field: 01
+	txid, fixed. 32-bytes.
+	output number, 8-bytes : 3b000000, (59)
+	scriptSig. variable length : 
+		length of the scriptSig, compactSize: 6a 
+		data of scriptSig. variable: 473044022062f4f61766e1edf89b9b94d0629d67bfefb62e6ffec63f17d0f10ce5e329dbf4022039d566558c1f98742345e70b194bbcb8b8fff5b7fa2f0507c9f31a5a2ea24749012103fc3e6b07b7bec800cb0861c172344687d146888aaf0f811eaca8b1ef6684c9fc
+	nSequence, fixed. 4-bytes: 00000080
+count of outputs, compactSize field: 02
+	amount 8-bytes, little endian: f07e0e0000000000
+	scriptPubKey. variable length: 
+		length of field: 17 
+		data:   	 a914783b39e49c6b6544a51bf0cbd4f47eef116be81987
+
+	amount 8-bytes: e0ec040000000000
+	scriptPubKey (locking script) variable: 19 76a91456c0bc2f50bc150d4ea122e66db7c48b01b9722988ac
+
+nLocktime, 4-bytes. fixed: 00000000
+
+
+version, 4-bytes: 01000000
+count of inputs: 01
+
+	txid: 913f3edcafa48bcd5742225a752f3dd8cef35596dfb0fce551c5b455ce0a02d6
+	output number: 3b000000
+
+	SPENT. no one can spend it ever again.
+
+
+first: reversed the txid to make it big endian
+	we looked up that tx
+	then we found the input indicated by output number
+
+	value of this output?
+	-> 1315269sats
+	locking script: 76a9141204fe7ba32421865e067e8415225847dc213b2688ac
+
+a tx input is an "arrow" that points to an output in another transaction
+a reference to another output in another transaction that *previously existed* in the bitcoin blockchain
+
+	scriptSig (unlocking script): 6a 473044022062f4f61766e1edf89b9b94d0629d67bfefb62e6ffec63f17d0f10ce5e329dbf4022039d566558c1f98742345e70b194bbcb8b8fff5b7fa2f0507c9f31a5a2ea24749012103fc3e6b07b7bec800cb0861c172344687d146888aaf0f811eaca8b1ef6684c9fc
+	nSequence: 00000080
+
+count of outputs: 02
+	amount -> how much bitcoin is this "output" worth: f07e0e0000000000
+	amount: 950,000sats
+	scriptPubKey (locking script): 17 a914783b39e49c6b6544a51bf0cbd4f47eef116be81987
+
+	amount: e0ec040000000000
+	amount: 322,784sats
+	scriptPubKey (locking script): 19 76a91456c0bc2f50bc150d4ea122e66db7c48b01b9722988ac
+nLocktime: 00000000
+
+
+this transaction "form" --> pre-SegWit
+			--> SegWit transactions look like
+
+three questions: 
+- how much bitcoin does this transaction lock up?
+	A: 1272784sats
+
+- how much bitcoin was spent into this transaction?
+	A: 1315269sats
+
+- how much did this transaction pay in fees?
+	-> A: 42485sats <- missing money
+
+
+all correct!!
+kody: it went to the coinbase!
+cam:  the fees
+jeff: the miners
+
+
+fees: do *not* show up in the tx
+      *do* show up in the BLOCK
+
+block: list of txs
+
+all of the inputs in a block:  INPUT AMT  
+all of the outputs in a block: OUTPUT AMT
+
+every tx: input > output
+every block: input < output
+
+every tx (except one) pays a fee, which means the 
+ - input > output  "losing money"
+
+- one very special tx in a block. coinbase tx
+	only one person who can make a coinbase tx
+	the person who mines the block
+	coinbase is special becuase it has NO INPUTS
+	IT DOES NOT SPEND ANY OUTPUTS. no prior UTXO the coinbase spends.
+	does have outputs!!
+	money for the outputs come from??
+
+	it comes from two places:
+	- all the other txs. the money they didn't include in their outputs
+	   - "fees"
+	- block subsidy. this is where new bitcoin comes from.
+	- determined by what number block this is. currently the block subsidy is 6.25bitcoin
+
+TOTAL AMOUNT AVAILABLE for a MINER in the COINBASE TX:
+	- all the bitcoin the txs in the block did not include in their outputs PLUS
+	- the block subsidy of 6.25btc
+
+6.27697814 - 6.25 = FEES for 799 txs
+		  = 2697814sats
+
+a transaction does two things:
+	- destroys outputs. marks it as spent. ->inputs: 1
+	- creates new outputs: 2
+
+when making a new tx:
+	- which existing outputs are you destroying? inputs
+	- what new outputs are you creating? outputs
+
+
+2 txs with the same input are also known as a DOUBLE SPEND.
+this is terrible. because that means money was "created"
+
+how does bitcoin core know if a output is available to be spent?
+-> 0.01315269 <-
+
+utxoset->  u t x o-> unspent transaction output
+
+bitcoin core node
+gets a new block.
+  1) go thru the list of inputs to every tx
+  2) that input is in its utxoset -> none of these inputs are double spends
+  3) remove that utxo from the utxoset. b/c it's been spent in a tx
+
+  1) go thru the list of outputs for every tx
+  2) add every new output to the utxoset
+
+
+utxoset
+	tx: 913f3edcafa48bcd5742225a752f3dd8cef35596dfb0fce551c5b455ce0a02d6
+	66 outputs
+
+new block with a tx comes in: 
+     I'm spending  913f3edcafa48bcd5742225a752f3dd8cef35596dfb0fce551c5b455ce0a02d6:59
+     I'm creating two new outputs, [0,1]
+
+utxoset
+	tx: 913f3edcafa48bcd5742225a752f3dd8cef35596dfb0fce551c5b455ce0a02d6
+	0-58,60-66 outputs
+	tx: newtxid
+	0,1
+
+
+block:  list of txs.
+tx:     list of outputs and inputs (outputs you're spending)
+
+
+next class:
+- where do txids come from
+- compactsize:
+  - let's find the compact size source code
+  - tx parser in bitcoin core
+- when are txs *valid*?
+- locktime
+- version
+- sequence numbers
+- running out of utxos??
+- segwit txs
+- unspendable outputs, learn about script etc
