@@ -147,7 +147,9 @@ Here's a quick example of a script with some data and opcodes. Yes, it is just a
 
 I can break this apart into opcodes and data because I'm a wizard. Here it is divided out as data + opcodes. There are two opcodes, one at the start and one at the end. The big chunk of hex in the middle is data.
 
-a8 2012998c017066eb0d2a70b94e6ed3192985855ce390f321bbdb832022888bd251 87
+
+op_code Data                                                               op_code
+a8      2012998c017066eb0d2a70b94e6ed3192985855ce390f321bbdb832022888bd251 87
 
 2 ways to view Script (language) script.
 
@@ -157,4 +159,7 @@ a8 2012998c017066eb0d2a70b94e6ed3192985855ce390f321bbdb832022888bd251 87
 
 
  
+## Stack Evaluation of Bitcoin Script
 
+
+  
