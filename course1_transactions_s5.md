@@ -161,5 +161,75 @@ a8      2012998c017066eb0d2a70b94e6ed3192985855ce390f321bbdb832022888bd251 87
  
 ## Stack Evaluation of Bitcoin Script
 
+Generally script is called a stack based language
 
+Got date? Push it on a stack. Like a stack of plates. 1 plate ontop of the next.
+You can't get to the bottom one before you take the ones from the top first.
+
+Stack comes in as a long string of data and the stack executor will look at it one byte at a time (similar to how I did it in the previous exercise) 
+
+#### Example:
+
+DATA: raw_script2 = "176567616d6965727020676e697473657265746e69206e41a820a966e2ccbbcd3814c8f913abcb1c4d487d63f23d93667c186b00a5a9181fd7b5887693010287"
+
+asm_script2 = "6567616d6965727020676e697473657265746e69206e41 OP_SHA256 a966e2ccbbcd3814c8f913abcb1c4d487d63f23d93667c186b00a5a9181fd7b5 OP_EQUALVERIFY OP_DUP OP_ADD 2 OP_EQUAL"
+
+Stack:
+
+7: OP_EQUAL
+6: 2
+5: OP_ADD
+4: OP_DUP
+3: OP_EQUALVERIFY
+2: a966e2ccbbcd3814c8f913abcb1c4d487d63f23d93667c186b00a5a9181fd7b5
+1: OP_SHA256
+0: 6567616d6965727020676e697473657265746e69206e41
+
+
+Success criteria: 
+    1. Either the stack is empty 
+    2. Or there's a true (one thing left on stack, only thing left on stack)
   
+#### Example From Video:
+
+script 3 XXXXXX 3 XXXXXX
+
+1: XXXXXX
+0: XXXXXX
+
+
+The above stack does not pass criteria (items still on stack)
+
+To make it pass we can add OP_CODES or operation codes, such as OP_EQUAL
+
+Every opcode touches a different number of items on the stack. Let's look at OP_EQUAL.
+
+
+OP_EQUAL -> 
+    1. Takes 2 items off the stack
+    2. compares them
+    3. if equal, push back onto stack as 1
+        if not equal, push back onto stack as 0 
+
+Taking above example if it ended with OP_EQUAL, we could make this script pass. 
+
+We need the Hex code for OP_EQUAL (find it in script.h in bitcoin_core repo)
+
+Hex code = 0x87
+
+New Script : 3 XXXXXX 3 XXXXXX 87 
+
+2: XXXXXX
+1: XXXXXX
+0: OP_EQUAL
+
+is XXXXXX == XXXXXX --> yes
+
+Stack is now:
+
+0: 1
+
+This evaluates to true and so the script is valid.
+
+
+
