@@ -141,3 +141,55 @@ OP_EQUAL
 
 scripts passes!! Woot
 
+## Takeaways and Tradeoffs with P2SH
+
+
+w/o P2SH nonstandard:
+    original (locking) script: 15686176652066756e2073746179696e6720706f6f7287 (have fun staying poor) "in hex" --> Bob pays
+    scriptSig (unlocking): 156861762b6620566e207346179696e662072706f6f72 -> I pay for this
+
+
+w/ P2SH scripthash:
+    locking script: a914fb528f99064469fd19f1fc7f105a9fd324c7160787, Bob pays for this.
+    unlocking script: 156861761b6620566e207346179696e662072706f6f7215686176652066756e2073746179696e6720706f6f7287, I pay for this. 
+
+*Remember lock script in script hash is a hash160 of the original nonstandard script*
+
+TakeAways:
+    1. we had to use P2SH. No other way to use our custom script w/o it.
+    2. how many bytes ended up in a tx for the nonstandard script? 
+        45 bytes
+    3. how many bytes ended up in the txs for the p2sh script?
+        69 bytes
+    4. which is more expensive in bytes? 
+        P2SH
+
+diffence 69-45 = 24 bytes. The extra byte came from having to add the length byte for the redeemscript in the p2sh unlocking script
+
+    5. Who's paying for these txs
+        TX1 -> locked to the p2sh script, Bob pays for this one, He pays 23 bytes
+        TX2 -> spent the p2sh script, I pay to spend this
+
+Bob's gonna pay me money with a914fb528f99064469fd19f1fc7f105a9fd324c7160787
+
+The person responsible paying for the potentially more expensive/complicated P2SH unlocking script is the one benefitting from the script (whoever can then spend it)
+
+
+##### QUIZ 9:
+
+
+Q: Where does our custom script end up if we lock to it using a Pay 2 ScriptHash?
+
+
+A: We lock to the hash of the script, the script itself goes in the scriptSig of the unlocking transaction.
+
+
+
+
+
+
+
+
+
+
+
