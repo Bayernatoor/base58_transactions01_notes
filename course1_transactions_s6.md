@@ -183,7 +183,33 @@ Q: Where does our custom script end up if we lock to it using a Pay 2 ScriptHash
 
 A: We lock to the hash of the script, the script itself goes in the scriptSig of the unlocking transaction.
 
+We lock to the hash of the script, the script itself goes in the scriptSig of the unlocking transaction.
 
+## Coding exercise: Convert Custom Scripts to P2SH Addresses
+
+
+Using regtest you can convert a custom script to a P2SH address by running:
+    `bitcoin-cli -regtest decodescript my_custom_script`
+
+The output will include a p2sh address which is the base58 address encoding of the P2SH
+scriptPubKey
+
+You can convet a base58 encoded address back to a scriptPubKey by runnng:
+    `bitcoin-cli -regtest decodescript my_address`
+
+This returns the p2sh address's scriptPubKey. This scriptPubKey is what you find in the raw transaction. The base58 address is a just a human readable version of the scriptPubKey
+
+
+*What's happening here?*
+
+When I decode the script. I am given a base58 encoded address. I can send (lock) bitcoin to this address. To unlock it I would need to present the (key) or the scriptSig that corresponds with the scriptPubKey. 
+
+custom script: `010101029301038801027693010487`
+
+ run:`bitcoin-cli -regtest decodescript my_custom_script`
+ Get a base58 adress: `2MurSWkcDqSq69nuWSBXwNraCFbHvSouGQn`
+ Send bitcoin to that address
+ That bitcoin is now locked to that address via the custom_script, to unlock it (spend it) I have to provide the correct scriptSig (The script that satisfies my scriptPubKey (custom script))
 
 
 
